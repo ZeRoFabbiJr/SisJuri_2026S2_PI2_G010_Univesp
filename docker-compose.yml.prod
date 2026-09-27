@@ -1,0 +1,116 @@
+#version: '3.8'
+
+# ==============================================================================
+# DOCKER COMPOSE HARDENED PARA AMBIENTE DE PRODUÇÃO (COM ACESSO À INTERNET) 
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # BANCO DE DADOS: PostgreSQL (Sem exposição de porta para o Host)
+  # ----------------------------------------------------------------------------
+  postgres_db:
+    image: postgres:16-alpine
+    container_name: sistema_juridico_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sistema_juridico}
+      POSTGRES_USER: ${POSTGRES_USER:-juridico_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_net
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-juridico_user} -d ${POSTGRES_DB:-sistema_juridico}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ----------------------------------------------------------------------------
+  # BACKEND: FastAPI (Permite acesso de saída para a API do CNJ Datajud)
+  # ----------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./BackEnd
+      dockerfile: Dockerfile
+    container_name: sistema_juridico_backend
+    restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-juridico_user}:${POSTGRES_PASSWORD}@postgres_db:5432/${POSTGRES_DB:-sistema_juridico}
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      CNJ_API_KEY: ${CNJ_API_KEY:-cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw==}
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    networks:
+      - frontend_net
+      - backend_net
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # ----------------------------------------------------------------------------
+  # FRONTEND: Nginx Unprivileged (Servidor Web Estático e Proxy)
+  # ----------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./FrontEnd
+      dockerfile: Dockerfile
+    container_name: sistema_juridico_frontend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    networks:
+      - frontend_net
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+# ------------------------------------------------------------------------------
+# REDES DO DOCKER
+# ------------------------------------------------------------------------------
+networks:
+  frontend_net:
+    driver: bridge
+    name: juridico_frontend_net
+  backend_net:
+    driver: bridge
+    name: juridico_backend_net
+
+# ------------------------------------------------------------------------------
+# VOLUMES PERSISTENTES
+# ------------------------------------------------------------------------------
+volumes:
+  postgres_data:
+    name: juridico_postgres_data
