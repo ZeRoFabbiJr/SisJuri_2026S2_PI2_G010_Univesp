@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Jurídico de Gerenciamento</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="font-normal">
+
+  <!-- REGIAO DE ANUNCIO PARA LEITORES DE TELA (AUDIO-DESCRIÇÃO) -->
+  <div id="sr-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- SKIP LINK PARA ACESSIBILIDADE DE TECLADO -->
+  <a href="#main-content" class="skip-link">Pular para o conteúdo principal (Alt + 0)</a>
+
+  <!-- BARRA SUPERIOR DE ACESSIBILIDADE E MENU MOBILE -->
+  <header class="a11y-bar" role="banner" aria-label="Barra de Acessibilidade">
+    <div class="a11y-controls">
+      <!-- BOTÃO MENU HAMBÚRGUER (EXIBIDO EM TELAS MOBILE) -->
+      <button id="btn-mobile-menu" class="btn-mobile-menu hidden" aria-label="Abrir Menu de Navegação" aria-expanded="false">
+        <span class="hamburger-icon">☰</span>
+        <span class="mobile-menu-text">Menu</span>
+      </button>
+
+      <!-- MENSAGEM DE AGUARDE (PISCANDO EM VERMELHO E BRANCO AO ACIONAR QUALQUER API) -->
+      <div id="a11y-api-loading" class="a11y-loading-indicator hidden" role="status" aria-live="assertive">
+        ⏳ Aguarde...
+      </div>
+
+      <button id="btn-toggle-theme" class="btn-a11y" aria-pressed="false" title="Alternar Modo Noturno (Alt + N)">
+        🌙 Modo Noturno
+      </button>
+      <div class="font-size-controls" role="group" aria-label="Controle de Tamanho da Fonte">
+        <button id="btn-font-small" class="btn-a11y" title="Fonte Pequena (Alt + -)">A-</button>
+        <button id="btn-font-normal" class="btn-a11y" title="Fonte Normal (Alt + 1)">A</button>
+        <button id="btn-font-large" class="btn-a11y" title="Fonte Grande (Alt + +)">A+</button>
+      </div>
+      <button id="btn-a11y-help" class="btn-a11y" title="Guia de Atalhos de Teclado (Alt + H)">
+        ♿ Atalhos (Alt + H)
+      </button>
+    </div>
+  </header>
+
+  <!-- TELA DE LOGIN -->
+  <div id="login-screen" class="screen-container" role="region" aria-label="Tela de Autenticação">
+    <div class="login-card">
+      <h2>Sistema Jurídico</h2>
+      <form id="login-form" autocomplete="off">
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" required placeholder="master@escritorio.com" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" required placeholder="Digite sua senha" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-primary btn-block">Entrar no Sistema</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PAINEL PRINCIPAL / DASHBOARD -->
+  <div id="main-layout" class="main-layout hidden">
+    <!-- OVERLAY ESCURO PARA O MENU MOBILE -->
+    <div id="sidebar-overlay" class="sidebar-overlay hidden" aria-hidden="true"></div>
+
+    <!-- SIDEBAR DE NAVEGAÇÃO -->
+    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Menu Principal">
+      <div class="sidebar-header">
+        <h3 id="user-role-title">Master</h3>
+        <button id="btn-close-sidebar" class="btn-close-sidebar" aria-label="Fechar Menu">&times;</button>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-page="dashboard" aria-keyshortcuts="Alt+D"><u>D</u>ashboard</button>
+        <button class="nav-item" id="nav-advogados" data-page="advogados" aria-keyshortcuts="Alt+A"><u>A</u>dvogados</button>
+        <button class="nav-item" data-page="clientes" aria-keyshortcuts="Alt+C"><u>C</u>lientes</button>
+        <button class="nav-item" data-page="processos" aria-keyshortcuts="Alt+P"><u>P</u>rocessos</button>
+        <button class="nav-item" data-page="agendamentos" aria-keyshortcuts="Alt+G">A<u>g</u>endamentos</button>
+        <button class="nav-item" data-page="compromissos" aria-keyshortcuts="Alt+O">C<u>o</u>mpromissos (7 Dias)</button>
+        <button class="nav-item" data-page="perfil" aria-keyshortcuts="Alt+M"><u>M</u>eu Perfil</button>
+        <button class="nav-item btn-logout" id="btn-logout" aria-keyshortcuts="Alt+S"><u>S</u>air</button>
+      </nav>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main id="main-content" class="content-area" tabindex="-1" role="main">
+      
+      <!-- PÁGINA: DASHBOARD -->
+      <section id="page-dashboard" class="page-content" aria-labelledby="title-dashboard">
+        <h1 id="title-dashboard" class="page-title">Painel do Administrador</h1>
+        <p class="page-subtitle">Bem-vindo ao sistema de gerenciamento do escritório de advocacia.</p>
+
+        <div class="metrics-grid" role="region" aria-label="Resumo de Métricas">
+          <div class="metric-card" tabindex="0">
+            <span class="metric-label">Total de Advogados</span>
+            <span class="metric-value" id="metric-advogados">0</span>
+          </div>
+          <div class="metric-card" tabindex="0">
+            <span class="metric-label">Total de Clientes</span>
+            <span class="metric-value" id="metric-clientes">0</span>
+          </div>
+          <div class="metric-card" tabindex="0">
+            <span class="metric-label">Total de Processos</span>
+            <span class="metric-value" id="metric-processos">0</span>
+          </div>
+          <div class="metric-card" tabindex="0">
+            <span class="metric-label">Agendamentos</span>
+            <span class="metric-value" id="metric-agendamentos">0</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>Visão geral do sistema</h3>
+          <p>
+            Neste painel, o usuário tem acesso a uma visão geral do sistema, acompanhando advogados, clientes, processos com integração ao CNJ Datajud e agendamentos de todo o escritório.
+          </p>
+        </div>
+      </section>
+
+      <!-- PÁGINA: ADVOGADOS (MASTER) -->
+      <section id="page-advogados" class="page-content hidden" aria-labelledby="title-advogados">
+        <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
+        <h1 id="title-advogados" class="page-title">Cadastro de Advogados</h1>
+        <p class="page-subtitle">Somente o usuário master pode cadastrar novos advogados.</p>
+
+        <div class="card-form">
+          <form id="form-advogado">
+            <div class="form-group">
+              <label for="adv-nome">Nome do Advogado</label>
+              <input type="text" id="adv-nome" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="adv-email">E-mail</label>
+              <input type="email" id="adv-email" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="adv-senha">Senha de Acesso</label>
+              <input type="password" id="adv-senha" required aria-required="true" autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn-primary">Cadastrar Advogado</button>
+          </form>
+        </div>
+
+        <div class="card-table">
+          <h3>Advogados cadastrados</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <caption>Relação de advogados ativos no escritório</caption>
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Perfil</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="table-advogados-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PÁGINA: CLIENTES -->
+      <section id="page-clientes" class="page-content hidden" aria-labelledby="title-clientes">
+        <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
+        <h1 id="title-clientes" class="page-title">Cadastro de Clientes</h1>
+        <p class="page-subtitle">Cadastre, edite e visualize os clientes do sistema.</p>
+
+        <div class="card-form">
+          <form id="form-cliente">
+            <input type="hidden" id="cli-id">
+            <div class="form-group">
+              <label for="cli-nome">Nome Completo</label>
+              <input type="text" id="cli-nome" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="cli-cpf">CPF</label>
+              <input type="text" id="cli-cpf" placeholder="000.000.000-00" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="cli-telefone">Telefone</label>
+              <input type="text" id="cli-telefone" placeholder="(00) 00000-0000" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="cli-email">E-mail</label>
+              <input type="email" id="cli-email" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="cli-advogado">Advogado responsável</label>
+              <select id="cli-advogado" required aria-required="true">
+                <option value="">Selecione</option>
+              </select>
+            </div>
+            <button type="submit" id="btn-save-cliente" class="btn-primary">Cadastrar Cliente</button>
+          </form>
+        </div>
+
+        <div class="card-table">
+          <h3>Clientes cadastrados</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <caption>Relação de clientes cadastrados</caption>
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">CPF</th>
+                  <th scope="col">Telefone</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Advogado</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="table-clientes-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PÁGINA: PROCESSOS E CNJ DATAJUD -->
+      <section id="page-processos" class="page-content hidden" aria-labelledby="title-processos">
+        <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
+        <h1 id="title-processos" class="page-title">Gerenciamento de Processos</h1>
+        <p class="page-subtitle">Cadastre, edite e consulte atualizações no Datajud / CNJ.</p>
+
+        <div class="card-form">
+          <form id="form-processo">
+            <input type="hidden" id="proc-id">
+            <div class="form-group">
+              <label for="proc-numero">Número Único CNJ (20 dígitos)</label>
+              <input type="text" id="proc-numero" placeholder="Ex: 00008323520184013202" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="proc-descricao">Descrição da Ação</label>
+              <textarea id="proc-descricao" rows="3" required aria-required="true"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="proc-status">Status</label>
+              <select id="proc-status" required aria-required="true">
+                <option value="">Selecione</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Aguardando audiência">Aguardando audiência</option>
+                <option value="Concluído">Concluído</option>
+                <option value="Arquivado">Arquivado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="proc-cliente">Cliente</label>
+              <select id="proc-cliente" required aria-required="true">
+                <option value="">Selecione</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="proc-advogado">Advogado responsável</label>
+              <select id="proc-advogado" required aria-required="true">
+                <option value="">Selecione</option>
+              </select>
+            </div>
+            <button type="submit" id="btn-save-processo" class="btn-primary">Cadastrar Processo</button>
+          </form>
+        </div>
+
+        <div class="card-table">
+          <h3>Processos cadastrados</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <caption>Lista de processos judiciais e dados do CNJ</caption>
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Número CNJ</th>
+                  <th scope="col">Descrição</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Advogado</th>
+                  <th scope="col">Tribunal</th>
+                  <th scope="col">Ações & Histórico CNJ</th>
+                </tr>
+              </thead>
+              <tbody id="table-processos-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PÁGINA: AGENDAMENTOS -->
+      <section id="page-agendamentos" class="page-content hidden" aria-labelledby="title-agendamentos">
+        <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
+        <h1 id="title-agendamentos" class="page-title">Agendamentos e Compromissos</h1>
+        <p class="page-subtitle">Gerencie reuniões e prazos do escritório.</p>
+
+        <!-- FILTRO DE AGENDA POR PERÍODO E ADVOGADO -->
+        <div class="card-form filter-card">
+          <h3>🔍 Consultar Agenda por Período e Advogado</h3>
+          <form id="form-filter-agendamento">
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="agd-filter-inicio">Data Início (Obrigatório)</label>
+                <input type="date" id="agd-filter-inicio" required aria-required="true">
+              </div>
+              <div class="form-group flex-1">
+                <label for="agd-filter-fim">Data Fim (Obrigatório)</label>
+                <input type="date" id="agd-filter-fim" required aria-required="true">
+              </div>
+              <div class="form-group flex-1">
+                <label for="agd-filter-advogado">Advogado (Opcional)</label>
+                <select id="agd-filter-advogado">
+                  <option value="">Todos os Advogados</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">🔍 Consultar Agenda</button>
+          </form>
+        </div>
+
+        <div class="card-form">
+          <h3>Cadastrar Novo Agendamento</h3>
+          <form id="form-agendamento">
+            <input type="hidden" id="agd-id">
+            <div class="form-group">
+              <label for="agd-titulo">Título da Reunião/Compromisso</label>
+              <input type="text" id="agd-titulo" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="agd-descricao">Descrição e Pauta</label>
+              <textarea id="agd-descricao" rows="3" required aria-required="true"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="agd-data-hora">Data e Hora</label>
+              <input type="datetime-local" id="agd-data-hora" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="agd-cliente">Cliente (Opcional)</label>
+              <select id="agd-cliente">
+                <option value="">Selecione</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="agd-advogado">Advogado responsável</label>
+              <select id="agd-advogado" required aria-required="true">
+                <option value="">Selecione</option>
+              </select>
+            </div>
+            <button type="submit" id="btn-save-agendamento" class="btn-primary">Cadastrar Agendamento</button>
+          </form>
+        </div>
+
+        <div class="card-table">
+          <h3>Agendamentos cadastrados</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <caption>Compromissos agendados na agenda</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Data e Hora</th>
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Advogado</th>
+                  <th scope="col">Título / Pauta</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="table-agendamentos-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PÁGINA: PRÓXIMOS COMPROMISSOS (7 DIAS) -->
+      <section id="page-compromissos" class="page-content hidden" aria-labelledby="title-compromissos">
+        <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
+        <h1 id="title-compromissos" class="page-title">Próximos Compromissos</h1>
+        <p class="page-subtitle">Agenda dos próximos 7 dias (incluindo hoje) do advogado logado. Período: <strong id="compromissos-range-label"></strong></p>
+
+        <div class="card-table">
+          <h3>Compromissos Agendados</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <caption>Relação de agendamentos para os próximos 7 dias do advogado</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Dia da Semana</th>
+                  <th scope="col">Hora</th>
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Assunto</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="table-compromissos-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PÁGINA: MEU PERFIL -->
+      <section id="page-perfil" class="page-content hidden" aria-labelledby="title-perfil">
+        <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
+        <h1 id="title-perfil" class="page-title">Meu Perfil</h1>
+        <p class="page-subtitle">Altere suas credenciais de acesso (E-mail e Senha) com exclusividade e segurança.</p>
+
+        <div class="card-form">
+          <form id="form-perfil">
+            <div class="form-group">
+              <label for="perfil-email">Novo E-mail de Acesso</label>
+              <input type="email" id="perfil-email" required aria-required="true">
+            </div>
+            <div class="form-group">
+              <label for="perfil-senha-atual">Senha Atual (Obrigatória para confirmar)</label>
+              <input type="password" id="perfil-senha-atual" required aria-required="true" placeholder="••••••">
+            </div>
+            <div class="form-group">
+              <label for="perfil-nova-senha">Nova Senha (Deixe em branco para manter a atual)</label>
+              <input type="password" id="perfil-nova-senha" placeholder="••••••">
+            </div>
+            <button type="submit" class="btn-primary">Atualizar Meu Perfil</button>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: ATA DE REUNIÃO -->
+  <div id="modal-ata" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-ata-title">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <h2 id="modal-ata-title">📜 Ata de Reunião</h2>
+        <button class="btn-close-modal" onclick="closeAllModals()" aria-label="Fechar janela">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="cnj-meta-box">
+          <p><strong>Compromisso:</strong> <span id="ata-info-titulo"></span></p>
+          <p><strong>Data/Hora:</strong> <span id="ata-info-data-hora"></span></p>
+          <p><strong>Cliente:</strong> <span id="ata-info-cliente"></span></p>
+          <p><strong>Advogado Responsável:</strong> <span id="ata-info-advogado"></span></p>
+          <p><strong>Pauta / Descrição:</strong> <span id="ata-info-descricao"></span></p>
+        </div>
+
+        <hr class="divider">
+
+        <form id="form-save-ata">
+          <input type="hidden" id="ata-agd-id">
+          <div class="form-group">
+            <label for="ata-conteudo">Redigir / Editar Ata da Reunião (Editável)</label>
+            <textarea id="ata-conteudo" rows="8" placeholder="Digite aqui a ata detalhada da reunião, decisões tomadas, encaminhamentos e prazos combinados..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary">💾 Salvar Ata de Reunião</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: HISTÓRICO EVOLUTIVO DE PROCESSO CNJ -->
+  <div id="modal-historico" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-hist-title">
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <h2 id="modal-hist-title">Histórico Evolutivo do Processo <span id="modal-hist-numero"></span></h2>
+        <button class="btn-close-modal" onclick="closeAllModals()" aria-label="Fechar janela">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modal-hist-meta" class="cnj-meta-box"></div>
+        
+        <h3>Linha do Tempo das Movimentações (CNJ Datajud / Manual)</h3>
+        <div id="timeline-historico" class="timeline-container"></div>
+
+        <hr class="divider">
+
+        <h4>Registrar Novo Andamento Manual</h4>
+        <form id="form-add-historico">
+          <input type="hidden" id="hist-processo-id">
+          <div class="form-group">
+            <label for="hist-nome-movimento">Nome da Ocorrência/Movimento</label>
+            <input type="text" id="hist-nome-movimento" required placeholder="Ex: Petição de Juntada Enviada">
+          </div>
+          <div class="form-group">
+            <label for="hist-descricao">Detalhamento</label>
+            <textarea id="hist-descricao" rows="2" placeholder="Observações internas sobre o andamento..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary">Adicionar ao Histórico</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GUIA DE ATALHOS DE TECLADO -->
+  <div id="modal-a11y-help" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-a11y-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-a11y-title">♿ Atalhos de Teclado (Acessibilidade)</h2>
+        <button class="btn-close-modal" onclick="closeAllModals()" aria-label="Fechar guia">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ul class="a11y-shortcuts-list">
+          <li><strong>Alt + 0</strong>: Ir para o conteúdo principal</li>
+          <li><strong>Alt + D</strong>: Abrir Dashboard</li>
+          <li><strong>Alt + A</strong>: Abrir Cadastro de Advogados</li>
+          <li><strong>Alt + C</strong>: Abrir Cadastro de Clientes</li>
+          <li><strong>Alt + P</strong>: Abrir Gerenciamento de Processos</li>
+          <li><strong>Alt + G</strong>: Abrir Agendamentos</li>
+          <li><strong>Alt + O</strong>: Abrir Próximos Compromissos (7 Dias)</li>
+          <li><strong>Alt + M</strong>: Abrir Meu Perfil</li>
+          <li><strong>Alt + S</strong>: Sair / Encerrar Sessão</li>
+          <li><strong>Alt + N</strong>: Alternar Modo Noturno</li>
+          <li><strong>Alt + + / - / 1</strong>: Fonte Grande / Pequena / Normal</li>
+          <li><strong>Esc</strong>: Fechar janelas e modais</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
