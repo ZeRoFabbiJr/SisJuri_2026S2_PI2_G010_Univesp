@@ -1,10 +1,9 @@
 # ==============================================================================
-# DOCKER COMPOSE COM TRAEFIK REVERSE PROXY - PRODUÇÃO VPS HOSTINGER
-# Domínio: sistema-juridico.cloud / www.sistema-juridico.cloud 
-# Repositório: https://github.com/ZeRoFabbiJr/SisJuri_2026S2_PI2_G010_Univesp
+# DOCKER COMPOSE COM TRAEFIK (MODO HOST - PADRÃO HOSTINGER)
+# Domínio: sistema-juridico.cloud / www.sistema-juridico.cloud
 # ==============================================================================
 
-#version: "3.8"
+version: "3.8"
 
 services:
   postgres_db:
@@ -54,24 +53,25 @@ services:
       - backend
     networks:
       - frontend_net
-      - host  #traefik-net: Conteiner traefik-traefik-1
     labels:
-      - "traefik-traefik-1.enable=true"
-      # Roteamento do Domínio Final sistema-juridico.cloud e www.sistema-juridico.cloud
-      - "traefik-traefik-1.http.routers.sisjuri.rule=Host(`sistema-juridico.cloud`) || Host(`www.sistema-juridico.cloud`)"
-      - "traefik-traefik-1.http.routers.sisjuri.entrypoints=web,websecure"
-      - "traefik-traefik-1.http.routers.sisjuri.tls=true"
-      - "traefik-traefik-1.http.routers.sisjuri.tls.certresolver=letsencrypt"
-      - "traefik-traefik-1.http.services.sisjuri.loadbalancer.server.port=8080"
+      - "traefik.enable=true"
+      # Regra de Roteamento para o Domínio
+      - "traefik.http.routers.sisjuri.rule=Host(`sistema-juridico.cloud`) || Host(`www.sistema-juridico.cloud`)"
+      - "traefik.http.routers.sisjuri.entrypoints=web,websecure"
+      - "traefik.http.routers.sisjuri.tls=true"
+      - "traefik.http.routers.sisjuri.tls.certresolver=letsencrypt"
+      # Porta interna do Nginx Unprivileged
+      - "traefik.http.services.sisjuri.loadbalancer.server.port=8080"
+      # Indica ao Traefik qual rede bridge utilizar para alcançar o container
+      - "traefik.docker.network=sistema_juridico_frontend_net"
 
 networks:
   backend_net:
     driver: bridge
     internal: true
   frontend_net:
+    name: sistema_juridico_frontend_net
     driver: bridge
-  host:
-    external: true
 
 volumes:
   juridico_postgres_data:
