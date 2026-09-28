@@ -54,7 +54,7 @@ services:
       - backend
     networks:
       - frontend_net
-      - traefik-net
+      - host  #traefik-net: Conteiner traefik-traefik-1
     labels:
       - "traefik.enable=true"
       # Roteamento do Domínio Final sistema-juridico.cloud e www.sistema-juridico.cloud
@@ -70,7 +70,7 @@ networks:
     internal: true
   frontend_net:
     driver: bridge
-  traefik-net:
+  host:
     external: true
 
 volumes:
