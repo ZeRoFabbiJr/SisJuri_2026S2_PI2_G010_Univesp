@@ -1,13 +1,8 @@
-// MÓDULO DE ACESSIBILIDADE, RECURSOS DE TECLADO E MONITORAMENTO DE API
-
+// MÓDULO DE ACESSIBILIDADE E RECURSOS DE TECLADO
 import { navigateTo } from './navigation.js';
 import { getCurrentUser, handleLogout } from './auth.js';
 
-let activeApiRequests = 0;
-
 export function initAccessibility() {
-  setupApiFetchInterceptor();
-
   const savedTheme = localStorage.getItem("theme");
   if (savedTheme === "dark") {
     document.body.classList.add("dark-mode");
@@ -24,7 +19,6 @@ export function initAccessibility() {
 
   document.addEventListener("keydown", (e) => {
     const user = getCurrentUser();
-
     if (e.altKey) {
       const key = e.key.toLowerCase();
       if (key === "0") {
@@ -80,45 +74,7 @@ export function initAccessibility() {
   document.getElementById("btn-font-normal")?.addEventListener("click", () => setFontSize("font-normal"));
   document.getElementById("btn-font-large")?.addEventListener("click", () => setFontSize("font-large"));
   document.getElementById("btn-a11y-help")?.addEventListener("click", toggleA11yHelpModal);
-}
-
-/**
- * INTERCEPTADOR GLOBAL DE FETCH (API DO BACKEND E REQUISIÇÕES EXTERNAS)
- * Exibe o aviso "Aguarde..." piscando em vermelho e branco na barra de acessibilidade
- * sempre que qualquer requisição de API estiver em andamento.
- */
-export function setupApiFetchInterceptor() {
-  if (window._apiInterceptorInitialized) return;
-  window._apiInterceptorInitialized = true;
-
-  const originalFetch = window.fetch;
-  window.fetch = async function (...args) {
-    showApiLoading();
-    try {
-      const response = await originalFetch.apply(this, args);
-      return response;
-    } finally {
-      hideApiLoading();
-    }
-  };
-}
-
-export function showApiLoading() {
-  activeApiRequests++;
-  const indicator = document.getElementById("a11y-api-loading");
-  if (indicator) {
-    indicator.classList.remove("hidden");
-  }
-}
-
-export function hideApiLoading() {
-  activeApiRequests = Math.max(0, activeApiRequests - 1);
-  if (activeApiRequests === 0) {
-    const indicator = document.getElementById("a11y-api-loading");
-    if (indicator) {
-      indicator.classList.add("hidden");
-    }
-  }
+  document.getElementById("btn-open-a11y-modal")?.addEventListener("click", toggleA11yHelpModal);
 }
 
 export function toggleDarkMode() {
@@ -133,11 +89,9 @@ export function setFontSize(sizeClass) {
   document.body.classList.remove("font-small", "font-normal", "font-large");
   document.body.classList.add(sizeClass);
   localStorage.setItem("fontSize", sizeClass);
-
   let label = "Tamanho de fonte normal selecionado.";
   if (sizeClass === "font-small") label = "Tamanho de fonte pequena selecionado.";
   if (sizeClass === "font-large") label = "Tamanho de fonte grande selecionado.";
-
   announceToSR(label);
 }
 
@@ -152,7 +106,7 @@ export function announceToSR(message) {
 }
 
 export function toggleA11yHelpModal() {
-  const modal = document.getElementById("modal-a11y-help");
+  const modal = document.getElementById("modal-a11y-shortcuts") || document.getElementById("modal-a11y-help");
   if (modal) {
     const isHidden = modal.classList.toggle("hidden");
     if (!isHidden) {

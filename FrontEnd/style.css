@@ -474,42 +474,8 @@ body {
 .divider { margin: 1.5rem 0; border: None; border-top: 1px solid var(--border-color); }
 
 
-/* ==============================================================================
-   RESPONSIVIDADE E MENU MOBILE (V13)
-   ============================================================================== */
-#btn-toggle-menu {
-  display: none !important;
-}
-
-@media (max-width: 768px) {
-  #btn-toggle-menu {
-    display: inline-flex !important;
-  }
-  #btn-open-a11y-modal, #btn-a11y-help {
-    display: none !important;
-  }
-  .main-layout {
-    flex-direction: column;
-    position: relative;
-  }
-  .sidebar {
-    width: 100%;
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-  .sidebar.active {
-    display: flex !important;
-  }
-  .content-area {
-    padding: 1.25rem 1rem;
-  }
-  .data-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+/* ESTILIZAÇÃO EXPLÍCITA PARA OPÇÕES DE SELECT (PREVINE TEXTO INVISÍVEL EM NAVEGADORES/SISTEMA OPERACIONAL) */
+select option {
+  background-color: var(--bg-card);
+  color: var(--text-dark);
 }

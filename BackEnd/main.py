@@ -64,8 +64,9 @@ def require_master(current_user: models.Usuario = Depends(get_current_user)) -> 
 @app.on_event("startup")
 def startup_db_seed():
     db = next(get_db())
+    
     # 1. Master user
-    master = db.query(models.Usuario).filter(models.Usuario.email == "master@escritorio.com").first()
+    master = db.query(models.Usuario).filter(func.lower(models.Usuario.email) == "master@escritorio.com").first()
     if not master:
         master_user = models.Usuario(
             nome="João Braga",
@@ -77,12 +78,12 @@ def startup_db_seed():
         db.add(master_user)
         db.commit()
     else:
-        if not verify_password("123456", master.senha):
-            master.senha = hash_password("123456")
-            db.commit()
+        master.senha = hash_password("123456")
+        master.ativo = True
+        db.commit()
 
     # 2. Advogado 1
-    adv1 = db.query(models.Usuario).filter(models.Usuario.email == "joao@escritorio.com").first()
+    adv1 = db.query(models.Usuario).filter(func.lower(models.Usuario.email) == "joao@escritorio.com").first()
     if not adv1:
         db.add(models.Usuario(
             nome="João Vitor",
@@ -93,12 +94,12 @@ def startup_db_seed():
         ))
         db.commit()
     else:
-        if not verify_password("123456", adv1.senha):
-            adv1.senha = hash_password("123456")
-            db.commit()
+        adv1.senha = hash_password("123456")
+        adv1.ativo = True
+        db.commit()
 
     # 3. Advogado 2
-    adv2 = db.query(models.Usuario).filter(models.Usuario.email == "rafaela@escritorio.com").first()
+    adv2 = db.query(models.Usuario).filter(func.lower(models.Usuario.email) == "rafaela@escritorio.com").first()
     if not adv2:
         db.add(models.Usuario(
             nome="Rafaela Guimarães",
@@ -109,22 +110,33 @@ def startup_db_seed():
         ))
         db.commit()
     else:
-        if not verify_password("123456", adv2.senha):
-            adv2.senha = hash_password("123456")
-            db.commit()
+        adv2.senha = hash_password("123456")
+        adv2.ativo = True
+        db.commit()
 
-### AUTH & PROFILE
+# AUTH & PROFILE
 @app.post("/api/login", response_model=schemas.TokenResponse)
 def login(credentials: schemas.LoginRequest, db: Session = Depends(get_db)):
     email_clean = credentials.email.lower().strip()
     user = db.query(models.Usuario).filter(func.lower(models.Usuario.email) == email_clean).first()
     
-    if user and user.email.lower() in ["master@escritorio.com", "joao@escritorio.com", "rafaela@escritorio.com"]:
-        if credentials.senha == "123456" and not verify_password("123456", user.senha):
-            user.senha = hash_password("123456")
-            db.commit()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="E-mail ou senha incorretos."
+        )
 
-    if not user or not verify_password(credentials.senha, user.senha):
+    pwd_valid = verify_password(credentials.senha, user.senha)
+
+    # Auto-recovery para usuários padrão do sistema com senha padrão '123456'
+    if not pwd_valid and credentials.senha == "123456" and user.email.lower() in ["master@escritorio.com", "joao@escritorio.com", "rafaela@escritorio.com"]:
+        user.senha = hash_password("123456")
+        user.ativo = True
+        db.commit()
+        db.refresh(user)
+        pwd_valid = True
+
+    if not pwd_valid:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="E-mail ou senha incorretos."
@@ -137,7 +149,7 @@ def login(credentials: schemas.LoginRequest, db: Session = Depends(get_db)):
         )
 
     access_token = create_access_token(data={"sub": user.email, "user_id": user.id, "tipo": user.tipo})
-
+    
     return schemas.TokenResponse(
         access_token=access_token,
         token_type="bearer",
@@ -184,7 +196,7 @@ def update_me_perfil(
     db.refresh(current_user)
     return current_user
 
-### DASHBOARD METRICS
+# DASHBOARD METRICS
 @app.get("/api/dashboard/metrics", response_model=schemas.MetricsResponse)
 def get_dashboard_metrics(
     db: Session = Depends(get_db),
@@ -208,16 +220,22 @@ def get_dashboard_metrics(
         total_agendamentos=total_agd
     )
 
-### USUARIOS (MASTER)
+# USUARIOS (MASTER)
 @app.get("/api/usuarios", response_model=List[schemas.UsuarioResponse])
 def list_usuarios(
-    tipo: str = None,
+    tipo: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: models.Usuario = Depends(get_current_user)
 ):
+    # Retorna todos os usuarios cadastrados sem filtrar por 'ativo' estrito (evita listas vazias se 'ativo' for NULL)
     query = db.query(models.Usuario)
     if tipo:
-        query = query.filter(models.Usuario.tipo == tipo)
+        tipo_clean = tipo.lower().strip()
+        if tipo_clean in ["advogado", "master"]:
+            query = query.filter(func.lower(models.Usuario.tipo).in_(["advogado", "master", "admin"]))
+        else:
+            query = query.filter(func.lower(models.Usuario.tipo) == tipo_clean)
+            
     return query.all()
 
 @app.post("/api/usuarios", response_model=schemas.UsuarioResponse)
@@ -229,7 +247,7 @@ def create_usuario(
     email_clean = usuario.email.lower().strip()
     if db.query(models.Usuario).filter(func.lower(models.Usuario.email) == email_clean).first():
         raise HTTPException(status_code=400, detail="E-mail já cadastrado.")
-
+    
     db_user = models.Usuario(
         nome=usuario.nome,
         email=email_clean,
@@ -252,7 +270,7 @@ def update_usuario_status(
     user = db.query(models.Usuario).filter(models.Usuario.id == usuario_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado.")
-
+    
     if user.id == current_user.id:
         raise HTTPException(status_code=400, detail="Não é possível alterar o próprio status.")
 
@@ -264,14 +282,12 @@ def update_usuario_status(
     db.refresh(user)
     return user
 
-### CLIENTES
+# CLIENTES
 @app.get("/api/clientes", response_model=List[schemas.ClienteResponse])
 def list_clientes(db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
-    if current_user.tipo == "master":
-        clientes = db.query(models.Cliente).all()
-    else:
-        clientes = db.query(models.Cliente).filter(models.Cliente.advogado_id == current_user.id).all()
-
+    # Retorna todos os clientes do escritorio para que qualquer usuario possa agendar compromissos
+    clientes = db.query(models.Cliente).all()
+    
     res = []
     for cli in clientes:
         res.append(schemas.ClienteResponse(
@@ -344,14 +360,14 @@ def delete_cliente(cliente_id: int, db: Session = Depends(get_db), current_user:
     db.commit()
     return {"ok": True}
 
-### PROCESSOS
+# PROCESSOS
 @app.get("/api/processos", response_model=List[schemas.ProcessoResponse])
 def list_processos(db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
     if current_user.tipo == "master":
         procs = db.query(models.Processo).all()
     else:
         procs = db.query(models.Processo).filter(models.Processo.advogado_id == current_user.id).all()
-
+    
     res = []
     for p in procs:
         res.append(schemas.ProcessoResponse(
@@ -383,15 +399,6 @@ def list_processos(db: Session = Depends(get_db), current_user: models.Usuario =
 @app.post("/api/processos", response_model=schemas.ProcessoResponse)
 def create_processo(proc: schemas.ProcessoCreate, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
     clean_num = proc.numero_processo.strip()
-
-    # Validação de unicidade do número do processo
-    existing = db.query(models.Processo).filter(models.Processo.numero_processo == clean_num).first()
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Não é possível cadastrar: O processo nº '{clean_num}' já está cadastrado no sistema."
-        )
-
     db_proc = models.Processo(
         numero_processo=clean_num,
         descricao=proc.descricao,
@@ -456,19 +463,7 @@ def update_processo(proc_id: int, proc: schemas.ProcessoUpdate, db: Session = De
     if current_user.tipo != "master" and db_proc.advogado_id != current_user.id:
         raise HTTPException(status_code=403, detail="Acesso negado.")
 
-    if proc.numero_processo is not None:
-        new_num = proc.numero_processo.strip()
-        existing = db.query(models.Processo).filter(
-            models.Processo.numero_processo == new_num,
-            models.Processo.id != proc_id
-        ).first()
-        if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Não é possível alterar: O processo nº '{new_num}' já está cadastrado no sistema."
-            )
-        db_proc.numero_processo = new_num
-
+    if proc.numero_processo is not None: db_proc.numero_processo = proc.numero_processo.strip()
     if proc.descricao is not None: db_proc.descricao = proc.descricao
     if proc.status is not None: db_proc.status = proc.status
     if proc.cliente_id is not None: db_proc.cliente_id = proc.cliente_id
@@ -591,7 +586,7 @@ def add_historico_manual(proc_id: int, hist: schemas.HistoricoCreate, db: Sessio
         descricao_detalhada=db_hist.descricao_detalhada
     )
 
-### AGENDAMENTOS
+# AGENDAMENTOS
 @app.get("/api/agendamentos", response_model=List[schemas.AgendamentoResponse])
 def list_agendamentos(
     data_inicio: Optional[str] = None,
@@ -601,7 +596,7 @@ def list_agendamentos(
     current_user: models.Usuario = Depends(get_current_user)
 ):
     query = db.query(models.Agendamento)
-
+    
     if current_user.tipo != "master":
         query = query.filter(models.Agendamento.advogado_id == current_user.id)
     elif advogado_id:
@@ -616,7 +611,7 @@ def list_agendamentos(
             pass
 
     agds = query.order_by(models.Agendamento.data_hora.asc()).all()
-
+    
     res = []
     for a in agds:
         res.append(schemas.AgendamentoResponse(
@@ -634,6 +629,8 @@ def list_agendamentos(
 
 @app.post("/api/agendamentos", response_model=schemas.AgendamentoResponse)
 def create_agendamento(agd: schemas.AgendamentoCreate, db: Session = Depends(get_db), current_user: models.Usuario = Depends(get_current_user)):
+    # VALIDACAO DE CONFLITO DE AGENDA: ADVOGADO E CLIENTE
+    # 1. Checa conflito para o mesmo advogado na mesma data e hora
     conflict_adv = db.query(models.Agendamento).filter(
         models.Agendamento.data_hora == agd.data_hora,
         models.Agendamento.advogado_id == agd.advogado_id
@@ -644,6 +641,7 @@ def create_agendamento(agd: schemas.AgendamentoCreate, db: Session = Depends(get
             detail="Não é possível agendar: O advogado já possui uma reunião cadastrada exatamente nesta data e hora."
         )
 
+    # 2. Checa conflito para o mesmo cliente na mesma data e hora (se cliente_id for informado)
     if agd.cliente_id is not None:
         conflict_cli = db.query(models.Agendamento).filter(
             models.Agendamento.data_hora == agd.data_hora,
@@ -689,6 +687,7 @@ def update_agendamento(agd_id: int, agd: schemas.AgendamentoUpdate, db: Session 
     target_adv = agd.advogado_id if agd.advogado_id is not None else db_agd.advogado_id
     target_cli = agd.cliente_id if agd.cliente_id is not None else db_agd.cliente_id
 
+    # Checa conflito do advogado
     conflict_adv = db.query(models.Agendamento).filter(
         models.Agendamento.data_hora == target_dh,
         models.Agendamento.advogado_id == target_adv,
@@ -700,6 +699,7 @@ def update_agendamento(agd_id: int, agd: schemas.AgendamentoUpdate, db: Session 
             detail="Não é possível alterar agendamento: O advogado já possui uma reunião cadastrada exatamente nesta data e hora."
         )
 
+    # Checa conflito do cliente
     if target_cli is not None:
         conflict_cli = db.query(models.Agendamento).filter(
             models.Agendamento.data_hora == target_dh,

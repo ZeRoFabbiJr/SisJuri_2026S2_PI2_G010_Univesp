@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema Jurídico de Gerenciamento</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=15">
 </head>
 <body class="font-normal">
 
@@ -14,20 +14,13 @@
   <!-- SKIP LINK PARA ACESSIBILIDADE DE TECLADO -->
   <a href="#main-content" class="skip-link">Pular para o conteúdo principal (Alt + 0)</a>
 
-  <!-- BARRA SUPERIOR DE ACESSIBILIDADE E MENU MOBILE -->
+  <!-- BARRA SUPERIOR DE ACESSIBILIDADE -->
   <header class="a11y-bar" role="banner" aria-label="Barra de Acessibilidade">
     <div class="a11y-controls">
-      <!-- BOTÃO MENU HAMBÚRGUER (EXIBIDO EM TELAS MOBILE) -->
-      <button id="btn-mobile-menu" class="btn-mobile-menu hidden" aria-label="Abrir Menu de Navegação" aria-expanded="false">
-        <span class="hamburger-icon">☰</span>
-        <span class="mobile-menu-text">Menu</span>
+      <!-- BOTÃO MENU MOBILE (EXIBIDO APENAS EM TELAS MOBILE) -->
+      <button id="btn-toggle-menu" class="btn-a11y" aria-expanded="false" title="Alternar Menu de Navegação">
+        ☰ Menu
       </button>
-
-      <!-- MENSAGEM DE AGUARDE (PISCANDO EM VERMELHO E BRANCO AO ACIONAR QUALQUER API) -->
-      <div id="a11y-api-loading" class="a11y-loading-indicator hidden" role="status" aria-live="assertive">
-        ⏳ Aguarde...
-      </div>
-
       <button id="btn-toggle-theme" class="btn-a11y" aria-pressed="false" title="Alternar Modo Noturno (Alt + N)">
         🌙 Modo Noturno
       </button>
@@ -36,7 +29,7 @@
         <button id="btn-font-normal" class="btn-a11y" title="Fonte Normal (Alt + 1)">A</button>
         <button id="btn-font-large" class="btn-a11y" title="Fonte Grande (Alt + +)">A+</button>
       </div>
-      <button id="btn-a11y-help" class="btn-a11y" title="Guia de Atalhos de Teclado (Alt + H)">
+      <button id="btn-open-a11y-modal" class="btn-a11y" title="Guia de Atalhos de Teclado (Alt + H)">
         ♿ Atalhos (Alt + H)
       </button>
     </div>
@@ -62,14 +55,10 @@
 
   <!-- PAINEL PRINCIPAL / DASHBOARD -->
   <div id="main-layout" class="main-layout hidden">
-    <!-- OVERLAY ESCURO PARA O MENU MOBILE -->
-    <div id="sidebar-overlay" class="sidebar-overlay hidden" aria-hidden="true"></div>
-
     <!-- SIDEBAR DE NAVEGAÇÃO -->
-    <aside id="sidebar" class="sidebar" role="navigation" aria-label="Menu Principal">
+    <aside class="sidebar" role="navigation" aria-label="Menu Principal">
       <div class="sidebar-header">
         <h3 id="user-role-title">Master</h3>
-        <button id="btn-close-sidebar" class="btn-close-sidebar" aria-label="Fechar Menu">&times;</button>
       </div>
       <nav class="sidebar-nav">
         <button class="nav-item active" data-page="dashboard" aria-keyshortcuts="Alt+D"><u>D</u>ashboard</button>
@@ -144,22 +133,20 @@
 
         <div class="card-table">
           <h3>Advogados cadastrados</h3>
-          <div class="table-responsive">
-            <table class="data-table">
-              <caption>Relação de advogados ativos no escritório</caption>
-              <thead>
-                <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">Nome</th>
-                  <th scope="col">E-mail</th>
-                  <th scope="col">Perfil</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="table-advogados-body"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <caption>Relação de advogados ativos no escritório</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Perfil</th>
+                <th scope="col">Status</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-advogados-body"></tbody>
+          </table>
         </div>
       </section>
 
@@ -200,23 +187,21 @@
 
         <div class="card-table">
           <h3>Clientes cadastrados</h3>
-          <div class="table-responsive">
-            <table class="data-table">
-              <caption>Relação de clientes cadastrados</caption>
-              <thead>
-                <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">Nome</th>
-                  <th scope="col">CPF</th>
-                  <th scope="col">Telefone</th>
-                  <th scope="col">E-mail</th>
-                  <th scope="col">Advogado</th>
-                  <th scope="col">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="table-clientes-body"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <caption>Relação de clientes cadastrados</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nome</th>
+                <th scope="col">CPF</th>
+                <th scope="col">Telefone</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Advogado</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-clientes-body"></tbody>
+          </table>
         </div>
       </section>
 
@@ -265,24 +250,22 @@
 
         <div class="card-table">
           <h3>Processos cadastrados</h3>
-          <div class="table-responsive">
-            <table class="data-table">
-              <caption>Lista de processos judiciais e dados do CNJ</caption>
-              <thead>
-                <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">Número CNJ</th>
-                  <th scope="col">Descrição</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Cliente</th>
-                  <th scope="col">Advogado</th>
-                  <th scope="col">Tribunal</th>
-                  <th scope="col">Ações & Histórico CNJ</th>
-                </tr>
-              </thead>
-              <tbody id="table-processos-body"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <caption>Lista de processos judiciais e dados do CNJ</caption>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Número CNJ</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Status</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Advogado</th>
+                <th scope="col">Tribunal</th>
+                <th scope="col">Ações & Histórico CNJ</th>
+              </tr>
+            </thead>
+            <tbody id="table-processos-body"></tbody>
+          </table>
         </div>
       </section>
 
@@ -350,24 +333,23 @@
 
         <div class="card-table">
           <h3>Agendamentos cadastrados</h3>
-          <div class="table-responsive">
-            <table class="data-table">
-              <caption>Compromissos agendados na agenda</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Data e Hora</th>
-                  <th scope="col">Cliente</th>
-                  <th scope="col">Advogado</th>
-                  <th scope="col">Título / Pauta</th>
-                  <th scope="col">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="table-agendamentos-body"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <caption>Compromissos agendados na agenda</caption>
+            <thead>
+              <tr>
+                <th scope="col">Data e Hora</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Advogado</th>
+                <th scope="col">Título / Pauta</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-agendamentos-body"></tbody>
+          </table>
         </div>
       </section>
 
+      
       <!-- PÁGINA: PRÓXIMOS COMPROMISSOS (7 DIAS) -->
       <section id="page-compromissos" class="page-content hidden" aria-labelledby="title-compromissos">
         <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
@@ -376,21 +358,19 @@
 
         <div class="card-table">
           <h3>Compromissos Agendados</h3>
-          <div class="table-responsive">
-            <table class="data-table">
-              <caption>Relação de agendamentos para os próximos 7 dias do advogado</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Dia da Semana</th>
-                  <th scope="col">Hora</th>
-                  <th scope="col">Cliente</th>
-                  <th scope="col">Assunto</th>
-                  <th scope="col">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="table-compromissos-body"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <caption>Relação de agendamentos para os próximos 7 dias do advogado</caption>
+            <thead>
+              <tr>
+                <th scope="col">Dia da Semana</th>
+                <th scope="col">Hora</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Assunto</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-compromissos-body"></tbody>
+          </table>
         </div>
       </section>
 
@@ -510,6 +490,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/main.js?v=15"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 # Domínio: sistema-juridico.cloud / www.sistema-juridico.cloud
 # ==============================================================================
 
-version: "3.8"
+#version: "3.8"
 
 services:
   postgres_db:
@@ -43,28 +43,55 @@ services:
       - backend_net
       - frontend_net
 
-  frontend:
-    build:
-      context: ./FrontEnd
-      dockerfile: Dockerfile
-    container_name: sistema_juridico_frontend
-    restart: always
-    depends_on:
-      - backend
-    networks:
-      - frontend_net
-    labels:
-      - "traefik.enable=true"
-      # Regra de Roteamento para o Domínio
-      - "traefik.http.routers.sisjuri.rule=Host(`sistema-juridico.cloud`) || Host(`www.sistema-juridico.cloud`)"
-      - "traefik.http.routers.sisjuri.entrypoints=web,websecure"
-      - "traefik.http.routers.sisjuri.tls=true"
-      - "traefik.http.routers.sisjuri.tls.certresolver=letsencrypt"
-      # Porta interna do Nginx Unprivileged
-      - "traefik.http.services.sisjuri.loadbalancer.server.port=8080"
-      # Indica ao Traefik qual rede bridge utilizar para alcançar o container
-      - "traefik.docker.network=sistema_juridico_frontend_net"
+#  frontend:
+#    build:
+#      context: ./FrontEnd3
+#      dockerfile: Dockerfile
+#    container_name: sistema_juridico_frontend
+#    restart: always
+#    ports:
+#      - 8080:8080
+#    depends_on:
+#      - backend
+#    networks:
+#      - frontend_net
+#    labels:
+#      - "traefik.enable=true"
+#      # Regra de Roteamento para o Domínio
+#      - "traefik.http.routers.sisjuri.rule=Host(`sistema-juridico.cloud`) || Host(`www.sistema-juridico.cloud`)"
+#      - "traefik.http.routers.sisjuri.entrypoints=web,websecure"
+#      - "traefik.http.routers.sisjuri.tls=true"
+#      - "traefik.http.routers.sisjuri.tls.certresolver=letsencrypt"
+#      # Porta interna do Nginx Unprivileged
+#      - "traefik.http.services.sisjuri.loadbalancer.server.port=8080"
+#      # Indica ao Traefik qual rede bridge utilizar para alcançar o container
+#      - "traefik.docker.network=sistema_juridico_frontend_net"
 
+  frontend:
+    build: 
+      context: ./FrontEnd 
+      dockerfile: Dockerfile 
+    container_name: sistema_juridico_frontend 
+    restart: unless-stopped 
+    ports:
+      - 8080:8080
+    labels: 
+      - "traefik.enable=true" 
+      # Roteamento para o domínio 
+      - "traefik.http.routers.sisjuri.rule=Host(`sistema-juridico.cloud`) || Host(`www.sistema-juridico.cloud`)" 
+      # Utiliza apenas o entrypoint seguro (HTTPS / Porta 443) 
+      - "traefik.http.routers.sisjuri.entrypoints=websecure" 
+      - "traefik.http.routers.sisjuri.tls=true" 
+      - "traefik.http.routers.sisjuri.tls.certresolver=letsencrypt" 
+      # Porta interna do Nginx Unprivileged 
+      - "traefik.http.services.sisjuri.loadbalancer.server.port=8080" 
+      # Nome exato da rede bridge definida no docker-compose.yml 
+      #- "traefik.docker.network=juridico_frontend_net" # Traefik roda na rede Host, então não precisa dessa label. 
+    depends_on: 
+      - backend 
+    networks: 
+      - frontend_net
+    
 networks:
   backend_net:
     driver: bridge
@@ -76,3 +103,4 @@ networks:
 volumes:
   juridico_postgres_data:
     driver: local
+

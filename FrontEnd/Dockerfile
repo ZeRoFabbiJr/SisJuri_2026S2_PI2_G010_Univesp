@@ -8,11 +8,11 @@ USER root
 # Instala cURL para garantir o funcionamento do Healthcheck
 RUN apk add --no-cache curl
 
+COPY --chown=101:101 nginx.conf /etc/nginx/conf.d/default.conf
+COPY --chown=101:101 . /usr/share/nginx/html/
+
 # Retorna para o usuário não-root oficial do Nginx (UID 101)
 USER 101
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY . /usr/share/nginx/html/
 
 EXPOSE 8080
 

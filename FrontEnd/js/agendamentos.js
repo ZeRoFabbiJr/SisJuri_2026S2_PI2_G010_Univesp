@@ -1,24 +1,55 @@
-// MÓDULO DE AGENDAMENTOS E ATAS DE REUNIÃO
+// MÓDULO DE AGENDAMENTOS E ATAS DE REUNIÃO (V10 - MENSAGENS EXATAS DE CONFLITO)
 import { getApiBaseUrl, handleFetchError } from './config.js';
 import { getAuthHeaders, getCurrentUser } from './auth.js';
 import { populateAdvogadoDropdown, populateClienteDropdown } from './dropdowns.js';
 import { announceToSR, closeAllModals } from './accessibility.js';
 
-export async function renderAgendamentos() {
-  const user = getCurrentUser();
-  await populateClienteDropdown("agd-cliente");
-  await populateAdvogadoDropdown("agd-advogado", user.tipo !== "master" ? user.id : null);
-  await populateAdvogadoDropdown("agd-filter-advogado");
+function formatLocalDate(date) {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
 
+function getDefaultDates() {
   const today = new Date();
-  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
-  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+  const dataInicio = formatLocalDate(today);
+  const future = new Date();
+  future.setDate(today.getDate() + 30);
+  const dataFim = formatLocalDate(future);
+  return { dataInicio, dataFim };
+}
+
+export async function renderAgendamentos() {
+  let user = getCurrentUser();
+  if (!user) {
+    try {
+      user = JSON.parse(sessionStorage.getItem("currentUser"));
+    } catch (e) {
+      user = null;
+    }
+  }
+
+  const { dataInicio, dataFim } = getDefaultDates();
 
   const inputInicio = document.getElementById("agd-filter-inicio");
   const inputFim = document.getElementById("agd-filter-fim");
 
-  if (inputInicio && !inputInicio.value) inputInicio.value = firstDay;
-  if (inputFim && !inputFim.value) inputFim.value = lastDay;
+  if (inputInicio) inputInicio.value = dataInicio;
+  if (inputFim) inputFim.value = dataFim;
+
+  const userId = user ? user.id : null;
+  const isMaster = user && user.tipo === "master";
+
+  try {
+    await Promise.allSettled([
+      populateClienteDropdown("agd-cliente"),
+      populateAdvogadoDropdown("agd-advogado", !isMaster ? userId : null),
+      populateAdvogadoDropdown("agd-filter-advogado")
+    ]);
+  } catch (err) {
+    console.error("[renderAgendamentos] Erro ao carregar dropdowns:", err);
+  }
 
   await fetchAndRenderAgendamentosList();
 }
@@ -27,14 +58,16 @@ export async function fetchAndRenderAgendamentosList() {
   const tbody = document.getElementById("table-agendamentos-body");
   if (!tbody) return;
 
-  const data_inicio = document.getElementById("agd-filter-inicio")?.value;
-  const data_fim = document.getElementById("agd-filter-fim")?.value;
-  const advogado_id = document.getElementById("agd-filter-advogado")?.value;
+  const inputInicio = document.getElementById("agd-filter-inicio");
+  const inputFim = document.getElementById("agd-filter-fim");
 
-  if (!data_inicio || !data_fim) {
-    alert("O período (Data Início e Data Fim) é obrigatório para consultar a agenda.");
-    return;
-  }
+  const { dataInicio, dataFim } = getDefaultDates();
+  if (inputInicio && !inputInicio.value) inputInicio.value = dataInicio;
+  if (inputFim && !inputFim.value) inputFim.value = dataFim;
+
+  const data_inicio = inputInicio?.value || dataInicio;
+  const data_fim = inputFim?.value || dataFim;
+  const advogado_id = document.getElementById("agd-filter-advogado")?.value;
 
   let url = `${getApiBaseUrl()}/agendamentos?data_inicio=${data_inicio}&data_fim=${data_fim}`;
   if (advogado_id) {
@@ -47,6 +80,11 @@ export async function fetchAndRenderAgendamentosList() {
     const agendamentos = await res.json();
 
     tbody.innerHTML = "";
+    if (!Array.isArray(agendamentos) || agendamentos.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:1.5rem;">Nenhum agendamento encontrado para o período selecionado.</td></tr>';
+      return;
+    }
+
     agendamentos.forEach(a => {
       const dt = new Date(a.data_hora).toLocaleString('pt-BR');
       const tr = document.createElement("tr");
@@ -77,6 +115,11 @@ export async function handleSaveAgendamento(e) {
   const cliente_id = document.getElementById("agd-cliente").value ? parseInt(document.getElementById("agd-cliente").value) : null;
   const advogado_id = parseInt(document.getElementById("agd-advogado").value);
 
+  if (!advogado_id) {
+    alert("Por favor, selecione um advogado responsável.");
+    return;
+  }
+
   const payload = { titulo, descricao, data_hora, cliente_id, advogado_id };
   const method = id ? "PUT" : "POST";
   const url = id ? `${getApiBaseUrl()}/agendamentos/${id}` : `${getApiBaseUrl()}/agendamentos`;
@@ -90,14 +133,22 @@ export async function handleSaveAgendamento(e) {
 
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      alert(errData.detail || "Erro ao salvar agendamento.");
+      const rawMsg = errData.detail || errData.details || errData.message;
+      const msg = typeof rawMsg === "string" ? rawMsg : "Erro ao salvar agendamento.";
+      alert(msg);
+      announceToSR(msg);
       return;
     }
 
     document.getElementById("form-agendamento").reset();
     document.getElementById("agd-id").value = "";
     document.getElementById("btn-save-agendamento").textContent = "Cadastrar Agendamento";
+
+    await populateClienteDropdown("agd-cliente");
+    await populateAdvogadoDropdown("agd-advogado");
+
     fetchAndRenderAgendamentosList();
+    alert("Agendamento salvo com sucesso!");
     announceToSR("Agendamento salvo com sucesso.");
   } catch (err) {
     handleFetchError(err);
@@ -160,7 +211,9 @@ export async function handleSaveAta(e) {
 
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      alert(errData.detail || "Erro ao salvar ata de reunião.");
+      const rawMsg = errData.detail || errData.details || errData.message;
+      const msg = typeof rawMsg === "string" ? rawMsg : "Erro ao salvar ata de reunião.";
+      alert(msg);
       return;
     }
 
@@ -179,11 +232,15 @@ export async function deleteAgendamento(id) {
       method: "DELETE",
       headers: getAuthHeaders()
     });
+
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      alert(errData.detail || "Erro ao excluir agendamento.");
+      const rawMsg = errData.detail || errData.details || errData.message;
+      const msg = typeof rawMsg === "string" ? rawMsg : "Erro ao excluir agendamento.";
+      alert(msg);
       return;
     }
+
     fetchAndRenderAgendamentosList();
   } catch (err) {
     handleFetchError(err);
