@@ -1,4 +1,4 @@
-// MÓDULO DE NAVEGAÇÃO E TRANSITION DE PÁGINAS
+// MÓDULO DE NAVEGAÇÃO E TRANSITION DE PÁGINAS (V19 - FIX TARGET PAGE ID)
 import { renderDashboard } from './dashboard.js';
 import { renderAdvogados } from './advogados.js';
 import { renderClientes } from './clientes.js';
@@ -6,9 +6,10 @@ import { renderProcessos } from './processos.js';
 import { renderAgendamentos } from './agendamentos.js';
 import { renderCompromissos } from './compromissos.js';
 import { renderPerfil } from './perfil.js';
-import { getCurrentUser } from './auth.js';
+import { getCurrentUser, resetSessionTimer } from './auth.js';
 
 export function navigateTo(pageId) {
+  resetSessionTimer();
   const user = getCurrentUser();
   if (!user) return;
 
@@ -29,7 +30,7 @@ export function navigateTo(pageId) {
     page.classList.add("hidden");
   });
 
-  const targetPage = document.getElementById(`page-${pageId}`);
+  const targetPage = document.getElementById("page-" + pageId);
   if (targetPage) {
     targetPage.classList.remove("hidden");
     targetPage.focus();

@@ -1,4 +1,4 @@
-// PONTO DE ENTRADA PRINCIPAL (ENTRY POINT DO FRONTEND MODULARIZADO)
+// PONTO DE ENTRADA PRINCIPAL (ENTRY POINT V19)
 import { initAccessibility, closeAllModals } from './accessibility.js';
 import { checkAuth, handleLogin, handleLogout } from './auth.js';
 import { navigateTo } from './navigation.js';
@@ -48,7 +48,6 @@ function setupEvents() {
         const isOpen = sidebar.classList.toggle("active");
         btnToggleMenu.setAttribute("aria-expanded", isOpen ? "true" : "false");
         if (isOpen) {
-          // Rola automaticamente para o topo da página para garantir a visibilidade do menu
           window.scrollTo({ top: 0, behavior: "smooth" });
           document.documentElement.scrollTop = 0;
           document.body.scrollTop = 0;

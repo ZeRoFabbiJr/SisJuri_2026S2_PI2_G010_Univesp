@@ -1,4 +1,4 @@
-/* STYLESHEET - SISTEMA JURÍDICO DE GERENCIAMENTO (COM ACESSIBILIDADE) */
+/* STYLESHEET - SISTEMA JURÍDICO DE GERENCIAMENTO (COM ACESSIBILIDADE E CRONÔMETRO V18) */
 
 :root {
   --bg-login: #0f172a;
@@ -131,6 +131,26 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
   border-color: #ffffff;
   outline: 2px solid #f59e0b;
+}
+
+/* ESTILOS DO CRONÔMETRO DE SESSÃO */
+.session-timer {
+  font-weight: bold;
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.4);
+  font-family: monospace, monospace;
+}
+
+.session-timer.timer-warning {
+  color: #ef4444;
+  border-color: #ef4444;
+  animation: pulse-red 1s infinite;
+}
+
+@keyframes pulse-red {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
 #login-screen {
@@ -473,10 +493,7 @@ body {
 .timeline-desc { font-size: 0.85em; color: var(--text-muted); }
 .divider { margin: 1.5rem 0; border: None; border-top: 1px solid var(--border-color); }
 
-
-/* ==============================================================================
-   RESPONSIVIDADE E MENU MOBILE (V13)
-   ============================================================================== */
+/* RESPONSIVIDADE E MENU MOBILE */
 #btn-toggle-menu {
   display: none !important;
 }

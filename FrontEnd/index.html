@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema Jurídico de Gerenciamento</title>
-  <link rel="stylesheet" href="css/style.css?v=15">
+  <link rel="stylesheet" href="css/style.css?v=19">
 </head>
 <body class="font-normal">
 
@@ -17,6 +17,10 @@
   <!-- BARRA SUPERIOR DE ACESSIBILIDADE -->
   <header class="a11y-bar" role="banner" aria-label="Barra de Acessibilidade">
     <div class="a11y-controls">
+      <!-- CRONÔMETRO DE SESSÃO (15 MINUTOS - CONTAGEM REGRESSIVA) -->
+      <span id="session-timer-display" class="btn-a11y session-timer hidden" title="Tempo restante de sessão por inatividade">
+        ⏳ 15:00
+      </span>
       <!-- BOTÃO MENU MOBILE (EXIBIDO APENAS EM TELAS MOBILE) -->
       <button id="btn-toggle-menu" class="btn-a11y" aria-expanded="false" title="Alternar Menu de Navegação">
         ☰ Menu
@@ -349,7 +353,6 @@
         </div>
       </section>
 
-      
       <!-- PÁGINA: PRÓXIMOS COMPROMISSOS (7 DIAS) -->
       <section id="page-compromissos" class="page-content hidden" aria-labelledby="title-compromissos">
         <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
@@ -378,12 +381,12 @@
       <section id="page-perfil" class="page-content hidden" aria-labelledby="title-perfil">
         <button class="btn-back" data-page="dashboard">&larr; Voltar ao painel</button>
         <h1 id="title-perfil" class="page-title">Meu Perfil</h1>
-        <p class="page-subtitle">Altere suas credenciais de acesso (E-mail e Senha) com exclusividade e segurança.</p>
+        <p class="page-subtitle">Altere suas credenciais de acesso (Senha) com exclusividade e segurança.</p>
 
         <div class="card-form">
           <form id="form-perfil">
             <div class="form-group">
-              <label for="perfil-email">Novo E-mail de Acesso</label>
+              <label for="perfil-email">E-mail de Acesso</label>
               <input type="email" id="perfil-email" required aria-required="true">
             </div>
             <div class="form-group">
@@ -490,6 +493,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/main.js?v=15"></script>
+  <script type="module" src="js/main.js?v=19"></script>
 </body>
 </html>
