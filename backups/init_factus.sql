@@ -329,8 +329,67 @@ COPY public.agendamentos (id, titulo, descricao, data_hora, advogado_id, cliente
 58	Alinhamento de Proposta de Acordo	Avaliando proposta enviada pelo exequente/réu e elaboração de contraproposta.	2026-10-07 10:00:00	4	18	Pauta concluída com sucesso. Documentos conferidos e petição protocolo emitida com cópia ao cliente.	2026-07-18 10:00:00
 59	Preparação para Depoimento Pessoal	Simulação e orientação do cliente para audiência de instrução e julgamento.	2026-10-09 11:00:00	4	19	Ata registrada: minuta de acordo aprovada pelo cliente com parcelamento em 5x. Enviar para homologação.	2026-07-19 10:00:00
 60	Consulta sobre Execução de Sentença	Análise do cálculo de liquidação e expedição de RPV/Precatório.	2026-10-11 12:00:00	4	20	Reunião produtiva. Solicitada certidão atualizada do imóvel para instrução do pedido de liminar.	2026-07-20 10:00:00
+61	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-10-31 08:00:00	2	1	Ata de Reunião realizada em 31/10/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 13:42:00.000000
+62	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-10-31 10:15:00	2	2	Ata de Reunião realizada em 31/10/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 08:54:00.000000
+63	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-01 11:30:00	2	3	Ata de Reunião realizada em 01/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 15:48:00.000000
+64	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-01 14:45:00	2	4	Ata de Reunião realizada em 01/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 11:41:00.000000
+65	Sessão de Julgamento no Tribunal	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-02 15:00:00	2	5	Ata de Reunião realizada em 02/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 12:55:00.000000
+66	Elaboração e Assinatura de Acordo Extrajudicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-02 17:15:00	2	6	Ata de Reunião realizada em 02/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 13:20:00.000000
+67	Despacho Presencial com o Juiz Titular	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-03 08:30:00	2	7	\N	2026-10-30 10:51:00.000000
+68	Conferência Virtual de Estratégia Processual	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-03 10:45:00	2	1	\N	2026-10-30 09:21:00.000000
+69	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-04 11:00:00	2	2	\N	2026-10-30 12:39:00.000000
+70	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-04 14:15:00	2	3	\N	2026-10-30 17:51:00.000000
+71	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-05 15:30:00	2	4	\N	2026-10-30 09:34:00.000000
+72	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-06 17:45:00	2	5	\N	2026-10-30 09:51:00.000000
+73	Sessão de Julgamento no Tribunal	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-06 08:00:00	2	6	\N	2026-10-30 10:28:00.000000
+74	Elaboração e Assinatura de Acordo Extrajudicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-07 10:15:00	2	7	\N	2026-10-30 18:22:00.000000
+75	Despacho Presencial com o Juiz Titular	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-07 11:30:00	2	1	\N	2026-10-30 14:59:00.000000
+76	Conferência Virtual de Estratégia Processual	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-08 14:45:00	2	2	\N	2026-10-30 15:48:00.000000
+77	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-08 15:00:00	2	3	\N	2026-10-30 10:15:00.000000
+78	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-09 17:15:00	2	4	\N	2026-10-30 15:17:00.000000
+79	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-09 08:30:00	2	5	\N	2026-10-30 18:32:00.000000
+80	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-10 10:45:00	2	6	\N	2026-10-30 18:13:00.000000
+81	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-10-31 08:00:00	3	8	Ata de Reunião realizada em 31/10/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 11:11:00.000000
+82	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-10-31 10:15:00	3	9	Ata de Reunião realizada em 31/10/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 17:56:00.000000
+83	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-01 11:30:00	3	10	Ata de Reunião realizada em 01/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 16:48:00.000000
+84	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-01 14:45:00	3	11	Ata de Reunião realizada em 01/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 13:22:00.000000
+85	Sessão de Julgamento no Tribunal	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-02 15:00:00	3	12	Ata de Reunião realizada em 02/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 18:26:00.000000
+86	Elaboração e Assinatura de Acordo Extrajudicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-02 17:15:00	3	13	Ata de Reunião realizada em 02/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 17:35:00.000000
+87	Despacho Presencial com o Juiz Titular	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-03 08:30:00	3	14	\N	2026-10-30 15:35:00.000000
+88	Conferência Virtual de Estratégia Processual	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-03 10:45:00	3	8	\N	2026-10-30 10:47:00.000000
+89	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-04 11:00:00	3	9	\N	2026-10-30 15:26:00.000000
+90	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-04 14:15:00	3	10	\N	2026-10-30 14:28:00.000000
+91	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-05 15:30:00	3	11	\N	2026-10-30 15:25:00.000000
+92	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-06 17:45:00	3	12	\N	2026-10-30 10:36:00.000000
+93	Sessão de Julgamento no Tribunal	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-06 08:00:00	3	13	\N	2026-10-30 12:37:00.000000
+94	Elaboração e Assinatura de Acordo Extrajudicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-07 10:15:00	3	14	\N	2026-10-30 14:29:00.000000
+95	Despacho Presencial com o Juiz Titular	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-07 11:30:00	3	8	\N	2026-10-30 09:46:00.000000
+96	Conferência Virtual de Estratégia Processual	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-08 14:45:00	3	9	\N	2026-10-30 11:11:00.000000
+97	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-08 15:00:00	3	10	\N	2026-10-30 18:12:00.000000
+98	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-09 17:15:00	3	11	\N	2026-10-30 12:34:00.000000
+99	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-09 08:30:00	3	12	\N	2026-10-30 09:22:00.000000
+100	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-10 10:45:00	3	13	\N	2026-10-30 11:16:00.000000
+101	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-10-31 08:00:00	4	15	Ata de Reunião realizada em 31/10/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 11:55:00.000000
+102	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-10-31 10:15:00	4	16	Ata de Reunião realizada em 31/10/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 18:45:00.000000
+103	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-01 11:30:00	4	17	Ata de Reunião realizada em 01/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 10:13:00.000000
+104	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-01 14:45:00	4	18	Ata de Reunião realizada em 01/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 10:20:00.000000
+105	Sessão de Julgamento no Tribunal	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-02 15:00:00	4	19	Ata de Reunião realizada em 02/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 18:58:00.000000
+106	Elaboração e Assinatura de Acordo Extrajudicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-02 17:15:00	4	20	Ata de Reunião realizada em 02/11/2026: Pauta discutida com sucesso e encaminhamentos acordados.	2026-10-30 18:28:00.000000
+107	Despacho Presencial com o Juiz Titular	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-03 08:30:00	4	21	\N	2026-10-30 16:10:00.000000
+108	Conferência Virtual de Estratégia Processual	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-03 10:45:00	4	15	\N	2026-10-30 18:11:00.000000
+109	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-04 11:00:00	4	16	\N	2026-10-30 17:54:00.000000
+110	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-04 14:15:00	4	17	\N	2026-10-30 14:11:00.000000
+111	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-05 15:30:00	4	18	\N	2026-10-30 18:11:00.000000
+112	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-06 17:45:00	4	19	\N	2026-10-30 13:25:00.000000
+113	Sessão de Julgamento no Tribunal	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-06 08:00:00	4	20	\N	2026-10-30 18:57:00.000000
+114	Elaboração e Assinatura de Acordo Extrajudicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-07 10:15:00	4	21	\N	2026-10-30 17:51:00.000000
+115	Despacho Presencial com o Juiz Titular	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-07 11:30:00	4	15	\N	2026-10-30 08:26:00.000000
+116	Conferência Virtual de Estratégia Processual	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-08 14:45:00	4	16	\N	2026-10-30 13:54:00.000000
+117	Reunião de Alinhamento Inicial	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-08 15:00:00	4	17	\N	2026-10-30 18:21:00.000000
+118	Audiência de Conciliação e Instrução	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-09 17:15:00	4	18	\N	2026-10-30 11:34:00.000000
+119	Atendimento com Cliente para Coleta de Provas	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-09 08:30:00	4	19	\N	2026-10-30 11:36:00.000000
+120	Análise de Laudo Pericial Técnico	Compromisso agendado para tratar de andamentos processuais e acordos com o cliente.	2026-11-10 10:45:00	4	20	\N	2026-10-30 08:35:00.000000
 \.
-
 -- SEQUENCES SETVAL
 SELECT pg_catalog.setval('public.agendamentos_id_seq', 60, true);
 SELECT pg_catalog.setval('public.clientes_id_seq', 21, true);
